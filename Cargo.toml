@@ -1,0 +1,16 @@
+    [package]
+    name = "fanwaave-interfaces"
+    version = "0.1.0"
+    edition = "2021"
+    license = "MIT"
+    description = "Data-only interfaces for Fanwaave"
+    repository = "https://github.com/fanwaave/fanwaave-interfaces"
+
+    [dependencies]
+    serde = { version = "1", features = ["derive"] }
+    serde_json = "1"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+
