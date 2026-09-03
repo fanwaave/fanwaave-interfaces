@@ -1,4 +1,18 @@
+[package]
+org = "fanwaave"
 name = "fanwaave-interfaces"
-kind = "interfaces"
 version = "0.1.0"
+description = "Public data, validation, and route contracts for fanwaave"
+license = "MIT"
 
+[targets.repository]
+dir = "."
+
+[targets.validation]
+dir = "validation"
+name = "fanwaave-public-validation-contracts"
+adapter = "none"
+
+[publish]
+include_readme = true
+tag_format = "v{version}"
