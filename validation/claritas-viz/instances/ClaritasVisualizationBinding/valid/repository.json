@@ -1,0 +1,1 @@
+{"provider":"claritas-viz","purposes":["trend-chart","activity-plot","distribution"],"capabilities":["line-segments","rolling-mean","histogram-counts"],"runtimes":["rust","typescript","dart"],"generatedWitnessOnly":true}

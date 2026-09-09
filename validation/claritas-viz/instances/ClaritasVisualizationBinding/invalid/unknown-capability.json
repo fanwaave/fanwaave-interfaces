@@ -1,0 +1,1 @@
+{"provider":"claritas-viz","purposes":["distribution"],"capabilities":["custom-kernel-density"],"runtimes":["rust"],"generatedWitnessOnly":true}
