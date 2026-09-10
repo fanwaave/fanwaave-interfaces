@@ -20,14 +20,19 @@ enum EnvKind {
   url: "url",
 }
 
+@id("Flags2EnvPrecedence")
+enum Flags2EnvPrecedence {
+  argv_over_env: "argv-over-env",
+}
+
 @id("Flags2EnvConfig")
 model Flags2EnvConfig {
   @minLength(1)
   @maxLength(256)
   contract: string;
 
-  require_audit: true;
-  precedence: "argv-over-env";
+  require_audit: boolean;
+  precedence: Flags2EnvPrecedence;
 }
 
 @id("EnvBinding")
@@ -83,9 +88,12 @@ model FanwaaveServerConfig {
 
 @id("FanwaaveConfig")
 model FanwaaveConfig {
-  version: 1;
+  @minValue(1)
+  @maxValue(1)
+  version: int32;
+
   mode: FanwaaveMode;
-  strict: true;
+  strict: boolean;
   flags2env: Flags2EnvConfig;
   env: EnvBinding[];
   client?: FanwaaveClientConfig;
