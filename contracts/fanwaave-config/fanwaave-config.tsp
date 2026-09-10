@@ -1,13 +1,16 @@
+import "@typespec/json-schema";
+using TypeSpec.JsonSchema;
+
 namespace Fanwaave.Config;
 
-@doc("Runtime role supported by one Fanwaave repository or executable.")
+@id("FanwaaveMode")
 enum FanwaaveMode {
   client: "client",
   server: "server",
   hybrid: "hybrid",
 }
 
-@doc("Canonical scalar coercion applied after an environment binding resolves.")
+@id("EnvKind")
 enum EnvKind {
   string: "string",
   bool: "bool",
@@ -17,7 +20,7 @@ enum EnvKind {
   url: "url",
 }
 
-@doc("flags-2-env remains the argv authority; argv-derived overrides win over ambient environment values.")
+@id("Flags2EnvConfig")
 model Flags2EnvConfig {
   @minLength(1)
   @maxLength(256)
@@ -27,7 +30,7 @@ model Flags2EnvConfig {
   precedence: "argv-over-env";
 }
 
-@doc("One named environment binding consumed by Fanwaave domain configuration.")
+@id("EnvBinding")
 model EnvBinding {
   @minLength(1)
   @maxLength(64)
@@ -50,7 +53,7 @@ model EnvBinding {
   description?: string;
 }
 
-@doc("Client-side Fanwaave binding references. References are checked semantically after schema admission.")
+@id("FanwaaveClientConfig")
 model FanwaaveClientConfig {
   enabled: boolean;
 
@@ -64,7 +67,7 @@ model FanwaaveClientConfig {
   auth_token_binding?: string;
 }
 
-@doc("Server-side Fanwaave binding references. References are checked semantically after schema admission.")
+@id("FanwaaveServerConfig")
 model FanwaaveServerConfig {
   enabled: boolean;
 
@@ -78,7 +81,7 @@ model FanwaaveServerConfig {
   push_provider_binding?: string;
 }
 
-@doc("Canonical parsed form of repository-root .fanwaave-cfg.toml version 1.")
+@id("FanwaaveConfig")
 model FanwaaveConfig {
   version: 1;
   mode: FanwaaveMode;
