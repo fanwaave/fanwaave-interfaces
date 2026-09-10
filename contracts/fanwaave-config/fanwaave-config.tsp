@@ -62,12 +62,15 @@ model EnvBinding {
 model FanwaaveClientConfig {
   enabled: boolean;
 
+  @minLength(1)
   @maxLength(64)
   api_base_url_binding?: string;
 
+  @minLength(1)
   @maxLength(64)
   tenant_id_binding?: string;
 
+  @minLength(1)
   @maxLength(64)
   auth_token_binding?: string;
 }
@@ -76,12 +79,15 @@ model FanwaaveClientConfig {
 model FanwaaveServerConfig {
   enabled: boolean;
 
+  @minLength(1)
   @maxLength(64)
   bind_addr_binding?: string;
 
+  @minLength(1)
   @maxLength(64)
   database_url_binding?: string;
 
+  @minLength(1)
   @maxLength(64)
   push_provider_binding?: string;
 }
