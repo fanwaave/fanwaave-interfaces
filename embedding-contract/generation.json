@@ -1,0 +1,24 @@
+{
+  "contractVersion": "2.0.0",
+  "owner": "fanwaave",
+  "repositoryRole": "interfaces",
+  "externalSqlAuthorities": [],
+  "dimensions": {
+    "storage": 4100,
+    "maximumSource": 4096,
+    "padding": "trailing-zero"
+  },
+  "codeFirst": {
+    "typeSpec": "embedding-contract/embeddings.tsp",
+    "jsonSchema": "embedding-contract/embedding-record.schema.json",
+    "rustModel": null
+  },
+  "databaseFirst": {
+    "authorityRepository": "fanwaave/fanwaave-orm-core",
+    "migrationsAreAppliedAtStartup": false
+  },
+  "conformance": {
+    "verifier": "scripts/verify-embedding-contract.mjs",
+    "typeSpecCompiler": "@typespec/compiler@1.15.0"
+  }
+}
