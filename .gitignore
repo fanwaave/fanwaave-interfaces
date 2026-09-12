@@ -12,3 +12,10 @@ Cargo.lock
 
 # typespec-json-schema-validator comparison evidence (generated; never an authority)
 .typespec-json-schema-validator/
+
+# DEN-3956: ignore agent scratch worktrees and temp dirs (fleet policy)
+tmp/
+temp/
+.tmp/
+tmp/worktrees/
+**/tmp/worktrees/
