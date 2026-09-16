@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fanwaave/fanwaave-interfaces/schemas/contact-delivery.schema.json",
+  "title": "Fanwaave Contact Delivery",
+  "$defs": {
+    "emailPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["to", "subject", "html"],
+      "properties": {
+        "to": { "type": "string", "format": "email", "maxLength": 320 },
+        "subject": { "type": "string", "minLength": 1, "maxLength": 998 },
+        "html": { "type": "string", "minLength": 1, "maxLength": 1048576 },
+        "text": { "type": "string", "maxLength": 1048576 },
+        "from": { "type": "string", "format": "email", "maxLength": 320 },
+        "reply_to": { "type": "string", "format": "email", "maxLength": 320 },
+        "categories": {
+          "type": "array",
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 255 }
+        },
+        "custom_args": { "type": "object", "maxProperties": 64 }
+      }
+    },
+    "smsPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["to", "body"],
+      "properties": {
+        "to": { "type": "string", "pattern": "^\\+[1-9][0-9]{7,14}$" },
+        "body": { "type": "string", "minLength": 1, "maxLength": 1600 },
+        "from": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "status_callback": { "type": "string", "format": "uri", "pattern": "^https://" }
+      }
+    },
+    "emailContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["channel", "payload"],
+      "properties": {
+        "channel": { "const": "email" },
+        "payload": { "$ref": "#/$defs/emailPayload" }
+      }
+    },
+    "smsContact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["channel", "payload"],
+      "properties": {
+        "channel": { "const": "sms" },
+        "payload": { "$ref": "#/$defs/smsPayload" }
+      }
+    },
+    "enqueueJob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["idempotency_key", "contact"],
+      "properties": {
+        "idempotency_key": { "type": "string", "minLength": 8, "maxLength": 512 },
+        "campaign_id": { "type": "string", "format": "uuid" },
+        "priority": { "type": "integer", "minimum": -1000, "maximum": 1000, "default": 0 },
+        "max_attempts": { "type": "integer", "minimum": 1, "maximum": 20, "default": 8 },
+        "metadata": { "type": "object", "maxProperties": 128 },
+        "contact": {
+          "oneOf": [
+            { "$ref": "#/$defs/emailContact" },
+            { "$ref": "#/$defs/smsContact" }
+          ]
+        }
+      }
+    },
+    "jobStatus": {
+      "enum": ["queued", "leased", "retry", "sent", "dead", "cancelled"]
+    },
+    "enqueueReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["job_id", "idempotency_key", "status", "duplicate"],
+      "properties": {
+        "job_id": { "type": "string", "format": "uuid" },
+        "idempotency_key": { "type": "string", "minLength": 8, "maxLength": 512 },
+        "status": { "$ref": "#/$defs/jobStatus" },
+        "duplicate": { "type": "boolean" }
+      }
+    },
+    "jobView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["job_id", "idempotency_key", "channel", "provider", "status", "attempt_count", "max_attempts"],
+      "properties": {
+        "job_id": { "type": "string", "format": "uuid" },
+        "idempotency_key": { "type": "string" },
+        "channel": { "enum": ["email", "sms"] },
+        "provider": { "enum": ["sendgrid", "twilio"] },
+        "status": { "$ref": "#/$defs/jobStatus" },
+        "attempt_count": { "type": "integer", "minimum": 0 },
+        "max_attempts": { "type": "integer", "minimum": 1 },
+        "provider_message_id": { "type": ["string", "null"] },
+        "last_error": { "type": ["string", "null"] }
+      }
+    },
+    "resultEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["job_id", "idempotency_key", "channel", "attempt_count", "result", "occurred_at"],
+      "properties": {
+        "job_id": { "type": "string", "format": "uuid" },
+        "idempotency_key": { "type": "string" },
+        "channel": { "enum": ["email", "sms"] },
+        "campaign_id": { "type": ["string", "null"], "format": "uuid" },
+        "attempt_count": { "type": "integer", "minimum": 1 },
+        "occurred_at": { "type": "string", "format": "date-time" },
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["disposition", "provider", "rate_limited", "latency_ms"],
+          "properties": {
+            "disposition": { "enum": ["sent", "retryable", "permanent_failure", "suppressed"] },
+            "provider": { "type": "string" },
+            "provider_message_id": { "type": ["string", "null"] },
+            "upstream_status": { "type": ["integer", "null"], "minimum": 100, "maximum": 599 },
+            "error": { "type": ["string", "null"], "maxLength": 4096 },
+            "rate_limited": { "type": "boolean" },
+            "latency_ms": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/enqueueJob" },
+    { "$ref": "#/$defs/enqueueReceipt" },
+    { "$ref": "#/$defs/jobView" },
+    { "$ref": "#/$defs/resultEvent" }
+  ]
+}
