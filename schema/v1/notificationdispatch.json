@@ -4,22 +4,19 @@
   "title": "NotificationDispatch",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "id",
-    "revision",
-    "payload"
-  ],
+  "required": ["id", "revision", "payload"],
   "properties": {
     "id": {
       "type": "string",
-      "minLength": 1
+      "minLength": 8,
+      "maxLength": 512,
+      "description": "Stable idempotency key for the dispatch."
     },
     "revision": {
-      "type": "string",
-      "minLength": 1
+      "const": "fanwaave-0002"
     },
     "payload": {
-      "type": "object"
+      "$ref": "../../schemas/contact-delivery.schema.json#/$defs/enqueueJob"
     }
   }
 }
