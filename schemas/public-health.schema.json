@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fanwaave/fanwaave-interfaces/schemas/public-health.schema.json",
+  "title": "Fanwaave Public Health",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ok", "service", "protocol"],
+  "properties": {
+    "ok": {
+      "type": "boolean",
+      "description": "True when the API process is serving requests."
+    },
+    "service": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Stable service identity."
+    },
+    "protocol": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "Fanwaave public protocol version."
+    }
+  }
+}
