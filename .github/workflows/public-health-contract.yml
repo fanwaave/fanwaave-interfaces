@@ -1,0 +1,60 @@
+name: Public health contract parity
+
+on:
+  pull_request:
+    paths:
+      - "contracts/public-health.tsp"
+      - "schemas/public-health.schema.json"
+      - ".github/workflows/public-health-contract.yml"
+  push:
+    branches: [main, dev]
+    paths:
+      - "contracts/public-health.tsp"
+      - "schemas/public-health.schema.json"
+      - ".github/workflows/public-health-contract.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out exact head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Compare peer authorities and emit Contract IR
+        uses: ORESoftware/typespec-json-schema-validator@69337efc11ba4ecaa90b48878c942384fc74f650
+        with:
+          typespec: contracts/public-health.tsp
+          schema: schemas/public-health.schema.json
+          report: .typespec-json-schema-validator/public-health-report.json
+          sarif: .typespec-json-schema-validator/public-health.sarif
+          contract_ir: .typespec-json-schema-validator/public-health-contract-ir.json
+          output_dir: .typespec-json-schema-validator/public-health-generated
+          max_probes: "64"
+      - name: Verify exact public-health consumer scope
+        uses: ORESoftware/typespec-json-schema-validator/actions/verify-contract-ir@69337efc11ba4ecaa90b48878c942384fc74f650
+        with:
+          contract_ir: .typespec-json-schema-validator/public-health-contract-ir.json
+          report: .typespec-json-schema-validator/public-health-report.json
+          typespec: contracts/public-health.tsp
+          schema: schemas/public-health.schema.json
+          generated_schema: .typespec-json-schema-validator/public-health-generated/typespec.generated.schema.json
+          expected_declarations: '["Fanwaave.Public.Health"]'
+      - name: Verify authored authorities stayed immutable
+        shell: bash
+        run: git diff --exit-code -- contracts/public-health.tsp schemas/public-health.schema.json
+      - name: Retain parity evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: public-health-contract-${{ github.run_id }}
+          path: .typespec-json-schema-validator/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
