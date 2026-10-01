@@ -12,14 +12,10 @@
     },
     "service": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 128,
       "description": "Stable service identity."
     },
     "protocol": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 64,
       "description": "Fanwaave public protocol version."
     }
   }
