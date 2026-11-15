@@ -27,9 +27,7 @@ fn validate(projection: &Value, schema: &Value) -> Result<(), &'static str> {
     {
         return Err("incompatible model shape");
     }
-    let fields = projection["fields"]
-        .as_object()
-        .ok_or("invalid fields")?;
+    let fields = projection["fields"].as_object().ok_or("invalid fields")?;
     let props = schema["properties"]
         .as_object()
         .ok_or("invalid properties")?;
@@ -47,8 +45,7 @@ fn validate(projection: &Value, schema: &Value) -> Result<(), &'static str> {
         return Err("incorrect required fields");
     }
     for field in expected {
-        if !required.iter().any(|item| item == field)
-            || !canonical.iter().any(|item| item == field)
+        if !required.iter().any(|item| item == field) || !canonical.iter().any(|item| item == field)
         {
             return Err("missing required field");
         }
