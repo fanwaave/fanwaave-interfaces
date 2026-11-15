@@ -17,3 +17,7 @@ These Node admission tests do not compile or execute `.atto` code. AttoLang comp
 ## Rust-first AttoLang contract verification
 
 Run `cargo test --test atto_contracts` for authored-schema parity and fail-closed negative tests. The workflow invokes Rust formatting, integration tests, and Clippy using an exact-head checkout. The previous Node tests remain for compatibility comparison; new automation and contract tests should use Rust rather than Python. The tests are contract guards, not full .atto compilation or runtime deserialization proof.
+
+### Isolated Rust verification
+
+Run `cargo test --manifest-path tools/atto-contract-rs/Cargo.toml --all-targets` for standalone Rust contract-parity tests. The dedicated CI checks that test crate, not unrelated formatting debt in the existing interface implementation. Full application/runtime compilation and .atto compilation are separate release requirements. Existing Node checks remain temporarily for comparison, and no Python test runner is introduced.

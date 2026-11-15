@@ -2,9 +2,9 @@ name: AttoLang public interface contracts
 on:
   push:
     branches: [dev]
-    paths: ['atto/**', 'tests/atto_contracts.rs', 'schema/v1/notificationdispatch.json', '.github/workflows/atto-contracts.yml']
+    paths: ['atto/**', 'tests/atto_contracts.rs', 'tools/atto-contract-rs/**', 'schema/v1/notificationdispatch.json', '.github/workflows/atto-contracts.yml']
   pull_request:
-    paths: ['atto/**', 'tests/atto_contracts.rs', 'schema/v1/notificationdispatch.json', '.github/workflows/atto-contracts.yml']
+    paths: ['atto/**', 'tests/atto_contracts.rs', 'tools/atto-contract-rs/**', 'schema/v1/notificationdispatch.json', '.github/workflows/atto-contracts.yml']
 permissions:
   contents: read
 jobs:
@@ -17,7 +17,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Verify exact candidate
+      - name: Verify exact candidate SHA
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
@@ -27,6 +27,6 @@ jobs:
         with:
           toolchain: 1.88.0
           components: rustfmt, clippy
-      - run: cargo fmt --check
-      - run: cargo test --test atto_contracts
-      - run: cargo clippy --test atto_contracts -- -D warnings
+      - run: cargo fmt --manifest-path tools/atto-contract-rs/Cargo.toml --check
+      - run: cargo test --manifest-path tools/atto-contract-rs/Cargo.toml --all-targets
+      - run: cargo clippy --manifest-path tools/atto-contract-rs/Cargo.toml --all-targets -- -D warnings
