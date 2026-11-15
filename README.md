@@ -4,7 +4,7 @@ Data-only contracts for Fan and push-notification delivery across web, mobile, a
 
 ## Experimental AttoLang projection
 
-`atto/notification-dispatch.atto` defines pure validation guards for the id-length and shape boundary of `NotificationDispatch`. `atto/notification-dispatch.v1.json` is a **contract-only, non-generated** projection of the authored JSON Schema at `schema/v1/notificationdispatch.json`. It intentionally does not claim to replace JSON Schema, TypeSpec, or the generated TypeScript/Dart contracts. The consuming adapter must check UTF-8 byte lengths, exact `fanwaave-0002` revision, and payload presence and validate the full authored schema separately.
+`atto/notification-dispatch.atto` defines pure validation guards for the id-length and shape boundary of `NotificationDispatch`. `atto/notification-dispatch.v1.json` is a **contract-only, non-generated** projection of the authored JSON Schema at `schema/v1/notificationdispatch.json`. It intentionally does not claim to replace JSON Schema, TypeSpec, or the generated TypeScript/Dart contracts. The consuming adapter must count Unicode code points (not UTF-8 bytes), check exact `fanwaave-0002` revision and payload presence, and validate the full authored schema separately.
 
 Run the exact-field parity and negative-case checks:
 

@@ -8,7 +8,8 @@
     "id": {
       "type": "string",
       "minLength": 8,
-      "maxLength": 512
+      "maxLength": 512,
+      "description": "Stable idempotency key for the dispatch."
     },
     "revision": {
       "const": "fanwaave-0002"

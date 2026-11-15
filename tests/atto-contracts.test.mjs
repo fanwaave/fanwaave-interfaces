@@ -25,10 +25,10 @@ test("reject widened object and fabricated generated status", () => {
   assert.throws(() => validate_atto_projection({...projection,additionalProperties:true},schema), /model shape/);
   assert.throws(() => validate_atto_projection({...projection,generated:true},schema), /authority/);
 });
-test("AttoLang guards are pure, with exact length bounds and no direct transport", () => {
-  assert.match(source, /pub fnc valid_dispatch_id_length\(int id_bytes\): bool/);
-  assert.match(source, /if id_bytes < 8 then/);
-  assert.match(source, /return id_bytes <= 512;/);
-  assert.match(source, /pub fnc valid_dispatch_shape\(int id_bytes, bool revision_matches, bool payload_present\): bool/);
+test("AttoLang guards are pure, with exact code-point bounds and no direct transport", () => {
+  assert.match(source, /pub fnc valid_dispatch_id_length\(int id_code_points\): bool/);
+  assert.match(source, /if id_code_points < 8 then/);
+  assert.match(source, /return id_code_points <= 512;/);
+  assert.match(source, /pub fnc valid_dispatch_shape\(int id_code_points, bool revision_matches, bool payload_present\): bool/);
   assert.doesNotMatch(source, /\b(?:fnc main|http\.get|Authorization|send)\b/);
 });
