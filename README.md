@@ -13,3 +13,7 @@ node --test tests/atto-contracts.test.mjs
 ```
 
 These Node admission tests do not compile or execute `.atto` code. AttoLang compiler conformance and the downstream client transport are release prerequisites.
+
+## Rust-first AttoLang contract verification
+
+Run `cargo test --test atto_contracts` for authored-schema parity and fail-closed negative tests. The workflow invokes Rust formatting, integration tests, and Clippy using an exact-head checkout. The previous Node tests remain for compatibility comparison; new automation and contract tests should use Rust rather than Python. The tests are contract guards, not full .atto compilation or runtime deserialization proof.
