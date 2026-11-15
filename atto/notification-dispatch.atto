@@ -1,0 +1,19 @@
+// Pure guards for the NotificationDispatch boundary.
+// Schema authority: schema/v1/notificationdispatch.json.
+// Adapter must pass Unicode code point length, matching JSON Schema minLength/maxLength.
+// This does not replace full JSON Schema validation or authenticate requests.
+pub fnc valid_dispatch_id_length(int id_code_points): bool {
+  if id_code_points < 8 then
+    return false;
+  fi
+  return id_code_points <= 512;
+}
+
+pub fnc valid_dispatch_shape(int id_code_points, bool revision_matches, bool payload_present): bool {
+  if revision_matches then
+    if payload_present then
+      return valid_dispatch_id_length(id_code_points);
+    fi
+  fi
+  return false;
+}

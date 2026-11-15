@@ -1,0 +1,28 @@
+{
+  "schema": "fanwaave.atto-contract-projection/v1",
+  "language": "atto",
+  "admission": "contract-only",
+  "authoritativeSchema": "schema/v1/notificationdispatch.json",
+  "model": "NotificationDispatch",
+  "fields": {
+    "id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 512,
+      "description": "Stable idempotency key for the dispatch."
+    },
+    "revision": {
+      "const": "fanwaave-0002"
+    },
+    "payload": {
+      "$ref": "../../schemas/contact-delivery.schema.json#/$defs/enqueueJob"
+    }
+  },
+  "required": [
+    "id",
+    "revision",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "generated": false
+}
