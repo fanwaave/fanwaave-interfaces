@@ -22,7 +22,10 @@ fn rejects_unknown_or_missing_public_definitions() {
     public["$defs"]["TrustedActor"] = json!({"type":"object"});
     assert!(fanwaave_public_validation_check::validate(&public, &routes, spec).is_err());
     let (mut public, routes, spec) = artifacts();
-    public["$defs"].as_object_mut().expect("object").remove("RequestMeta");
+    public["$defs"]
+        .as_object_mut()
+        .expect("object")
+        .remove("RequestMeta");
     assert!(fanwaave_public_validation_check::validate(&public, &routes, spec).is_err());
 }
 #[test]

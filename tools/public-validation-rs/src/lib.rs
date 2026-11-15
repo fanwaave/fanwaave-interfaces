@@ -12,7 +12,8 @@ pub fn validate(public: &Value, bindings: &Value, typespec: &str) -> Result<(), 
     let definitions = public["$defs"]
         .as_object()
         .ok_or("public definitions must be an object")?;
-    if definitions.len() != PUBLIC.len() || PUBLIC.iter().any(|name| !definitions.contains_key(*name))
+    if definitions.len() != PUBLIC.len()
+        || PUBLIC.iter().any(|name| !definitions.contains_key(*name))
     {
         return Err("public definition set drift".into());
     }
@@ -29,7 +30,9 @@ pub fn validate(public: &Value, bindings: &Value, typespec: &str) -> Result<(), 
     }
     for name in PRIVATE {
         if authored_json.contains(name) || typespec.contains(name) {
-            return Err(format!("private model leaked into public contracts: {name}"));
+            return Err(format!(
+                "private model leaked into public contracts: {name}"
+            ));
         }
     }
     let routes = bindings["bindings"]

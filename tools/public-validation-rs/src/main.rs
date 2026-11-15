@@ -1,7 +1,7 @@
 #![forbid(unsafe_code)]
 
-use std::{fs, path::Path};
 use serde_json::Value;
+use std::{fs, path::Path};
 
 fn read_json(path: &Path) -> Result<Value, String> {
     let data = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
