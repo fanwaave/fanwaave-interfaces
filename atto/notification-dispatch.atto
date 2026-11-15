@@ -1,0 +1,19 @@
+// Pure, allocation-free guards for the NotificationDispatch boundary.
+// Schema authority: schema/v1/notificationdispatch.json.
+// Lengths must be measured as UTF-8 bytes at the adapter boundary.
+// This does not replace JSON Schema validation or authenticate requests.
+pub fnc valid_dispatch_id_length(int id_bytes): bool {
+  if id_bytes < 8 then
+    return false;
+  fi
+  return id_bytes <= 512;
+}
+
+pub fnc valid_dispatch_shape(int id_bytes, bool revision_matches, bool payload_present): bool {
+  if revision_matches then
+    if payload_present then
+      return valid_dispatch_id_length(id_bytes);
+    fi
+  fi
+  return false;
+}
