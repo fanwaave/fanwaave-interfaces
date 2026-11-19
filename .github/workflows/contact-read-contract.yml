@@ -6,6 +6,7 @@ on:
       - "contracts/contact-read.tsp"
       - "schemas/contact-read.schema.json"
       - "src/contact_read.rs"
+      - "scripts/verify-contact-read-peer.mjs"
       - "src/lib.rs"
       - "Cargo.toml"
       - "docs/contact-read.md"
@@ -47,6 +48,7 @@ jobs:
         run: cargo test --all-targets
       - name: Strict Clippy
         run: cargo clippy --all-targets -- -D warnings
-      - name: Verify JSON Schema parses and has only the intended read operation
-        run: |
-          node -e 'const s=require("./schemas/contact-read.schema.json"); const x=s.$defs; if(x.operation.properties.kind.const!=="get_contact_job"||x.claims.properties.scope.const!=="contact_job.read"||x.claims.properties.aud.const!=="fanwaave-contact-reader")process.exit(1)'
+      - name: Verify independently authored TypeSpec and JSON Schema structural peers
+        run: node scripts/verify-contact-read-peer.mjs
+      - name: Compile actual Microsoft TypeSpec contract
+        run: npx --yes --package @typespec/compiler@1.15.0 tsp compile contracts/contact-read.tsp --no-emit
