@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fanwaave/fanwaave-interfaces/schemas/contact-read.schema.json",
+  "title": "Fanwaave scoped contact read",
+  "$defs": {
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "job_id"
+      ],
+      "properties": {
+        "kind": {
+          "const": "get_contact_job"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "iss",
+        "aud",
+        "sub",
+        "scope",
+        "job_id",
+        "iat",
+        "nbf",
+        "exp",
+        "jti"
+      ],
+      "properties": {
+        "iss": {
+          "const": "fanwaave-contact-auth"
+        },
+        "aud": {
+          "const": "fanwaave-contact-reader"
+        },
+        "sub": {
+          "type": "string"
+        },
+        "scope": {
+          "const": "contact_job.read"
+        },
+        "job_id": {
+          "type": "string"
+        },
+        "iat": {
+          "type": "integer"
+        },
+        "nbf": {
+          "type": "integer"
+        },
+        "exp": {
+          "type": "integer"
+        },
+        "jti": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/operation"
+    },
+    {
+      "$ref": "#/$defs/claims"
+    }
+  ]
+}

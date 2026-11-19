@@ -2,6 +2,7 @@
 
 //! Data-only contracts. Implementations live in clients, servers, and lib-core.
 
+pub mod contact_read;
 pub mod error;
 pub mod protocol;
 pub mod schema;
