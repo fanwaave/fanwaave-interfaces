@@ -25,8 +25,8 @@ impl ContactReadOperation {
     /// # Errors
     /// Rejects invalid or noncanonical UUIDs.
     pub fn validate(&self) -> Result<(), ContactReadContractError> {
-        let id = Uuid::parse_str(self.job_id())
-            .map_err(|_| ContactReadContractError::InvalidJobId)?;
+        let id =
+            Uuid::parse_str(self.job_id()).map_err(|_| ContactReadContractError::InvalidJobId)?;
         if id.to_string() != self.job_id() {
             return Err(ContactReadContractError::InvalidJobId);
         }
@@ -143,22 +143,36 @@ mod tests {
         assert_eq!(good.validate_shape(), Ok(()));
         let mut wrong = claims();
         wrong.scope = "contact_job.write".into();
-        assert_eq!(wrong.validate_shape(), Err(ContactReadContractError::InvalidAuthority));
+        assert_eq!(
+            wrong.validate_shape(),
+            Err(ContactReadContractError::InvalidAuthority)
+        );
         wrong = claims();
         wrong.exp = 99;
-        assert_eq!(wrong.validate_shape(), Err(ContactReadContractError::InvalidTimeWindow));
+        assert_eq!(
+            wrong.validate_shape(),
+            Err(ContactReadContractError::InvalidTimeWindow)
+        );
         wrong = claims();
         wrong.sub.clear();
-        assert_eq!(wrong.validate_shape(), Err(ContactReadContractError::InvalidPrincipal));
+        assert_eq!(
+            wrong.validate_shape(),
+            Err(ContactReadContractError::InvalidPrincipal)
+        );
         wrong = claims();
         wrong.job_id = "all".into();
-        assert_eq!(wrong.validate_shape(), Err(ContactReadContractError::InvalidJobId));
+        assert_eq!(
+            wrong.validate_shape(),
+            Err(ContactReadContractError::InvalidJobId)
+        );
     }
 
     #[test]
     fn unknown_claim_fields_are_rejected() {
         let mut obj = serde_json::to_value(claims()).expect("serializes");
-        obj.as_object_mut().expect("object").insert("admin".into(), json!(true));
+        obj.as_object_mut()
+            .expect("object")
+            .insert("admin".into(), json!(true));
         assert!(serde_json::from_value::<ContactReadGrantClaims>(obj).is_err());
     }
 }

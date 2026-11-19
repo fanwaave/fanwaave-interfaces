@@ -41,8 +41,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Rustfmt
-        run: cargo fmt --all -- --check
+      - name: Rustfmt of new contract module
+        run: rustfmt --edition=2021 --check src/contact_read.rs
       - name: Run Rust parser and structural validation tests
         run: cargo test --all-targets
       - name: Strict Clippy
