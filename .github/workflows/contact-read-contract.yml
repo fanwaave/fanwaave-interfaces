@@ -1,0 +1,54 @@
+name: contact-read-contract
+
+on:
+  pull_request:
+    paths:
+      - "contracts/contact-read.tsp"
+      - "schemas/contact-read.schema.json"
+      - "src/contact_read.rs"
+      - "scripts/verify-contact-read-peer.mjs"
+      - "src/lib.rs"
+      - "Cargo.toml"
+      - "docs/contact-read.md"
+      - ".github/workflows/contact-read-contract.yml"
+  push:
+    branches: [dev]
+    paths:
+      - "contracts/contact-read.tsp"
+      - "schemas/contact-read.schema.json"
+      - "src/contact_read.rs"
+      - "src/lib.rs"
+      - "Cargo.toml"
+      - ".github/workflows/contact-read-contract.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  rust-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact revision
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Rustfmt of new contract module
+        run: rustfmt --edition=2021 --check src/contact_read.rs
+      - name: Run Rust parser and structural validation tests
+        run: cargo test --all-targets
+      - name: Strict Clippy
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Verify independently authored TypeSpec and JSON Schema structural peers
+        run: node scripts/verify-contact-read-peer.mjs
+      - name: Compile actual Microsoft TypeSpec contract
+        run: npx --yes --package @typespec/compiler@1.15.0 tsp compile contracts/contact-read.tsp --no-emit
