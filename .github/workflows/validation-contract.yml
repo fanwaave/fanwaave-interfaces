@@ -1,26 +1,39 @@
 name: validation-contract
-
 on:
   pull_request:
     paths:
       - "validation/**"
-      - "scripts/check-validation-contract.py"
+      - "tools/public-validation-rs/**"
       - ".github/workflows/validation-contract.yml"
   push:
-    branches: [main]
+    branches: [main, dev]
     paths:
       - "validation/**"
-      - "scripts/check-validation-contract.py"
+      - "tools/public-validation-rs/**"
       - ".github/workflows/validation-contract.yml"
-
 permissions:
   contents: read
-
 jobs:
   public-authorities:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - run: python3 scripts/check-validation-contract.py
-      - run: python3 -m json.tool validation/public-contracts.v1.json >/dev/null
-      - run: python3 -m json.tool validation/route-bindings.v1.json >/dev/null
+      - name: Check out exact candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact PR head
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          git diff --check
+      - uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c
+        with:
+          toolchain: 1.88.0
+          components: rustfmt, clippy
+      - run: cargo fmt --manifest-path tools/public-validation-rs/Cargo.toml --check
+      - run: cargo clippy --manifest-path tools/public-validation-rs/Cargo.toml --all-targets -- -D warnings
+      - run: cargo test --manifest-path tools/public-validation-rs/Cargo.toml --all-targets
+      - run: cargo run --manifest-path tools/public-validation-rs/Cargo.toml --quiet
